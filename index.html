@@ -46,14 +46,13 @@
    <main id="container">
        <div id="side-panel">
 
-           <h2>Earthquake List</h2>
-           <button>Sort by Magnitude</button>
+           <h2>Bike Racks</h2>
+           <button>Sort by Capacity</button>
 
            <table>
                <tr>
-                   <th>id</th>
-                   <th>magnitude</th>
-                   <th>timestamp</th>
+                   <th>Location</th>
+                   <th>Bike Rack Capacity</th>
                </tr>
            </table>
 
@@ -64,51 +63,50 @@
         mapboxgl.accessToken = 'pk.eyJ1IjoiY2hyaXN0aWFua2Fsdml6IiwiYSI6ImNtaGIwYnN3ejBuM3gyb3Byc3kyYTIxNWsifQ.qRi071tuHBtWEMdv5sjCnQ';
         let map = new mapboxgl.Map({
             container: 'map', // container ID
-            style: 'mapbox://styles/mapbox/satellite-v9', // style URL
-            zoom: 5.5, // starting zoom
-            center: [138, 38] // starting center
+            style: 'mapbox://styles/mapbox/light-v11', // style URL
+            zoom: 11, // starting zoom
+            center: [-122.33, 47.6] // starting center
         });
 
         async function geojsonFetch() {
-            let response, earthquakes, japan, table;
-            response = await fetch('assets/earthquakes.geojson');
-            earthquakes = await response.json();
-            response = await fetch('assets/japan.json');
-            japan = await response.json();
+            let response, lanes, racks, table;
+            response = await fetch('assets/bike_facilities_clean.geojson');
+            lanes = await response.json();
+            response = await fetch('assets/bike_racks_clean.geojson');
+            racks = await response.json();
 
             //load data to the map as new layers and table on the side.
             map.on('load', function loadingData() {
 
-                map.addSource('earthquakes', {
+                map.addSource('bike-lanes', {
                     type: 'geojson',
-                    data: earthquakes
+                    data: lanes
                 });
 
                 map.addLayer({
-                    'id': 'earthquakes-layer',
-                    'type': 'circle',
-                    'source': 'earthquakes',
+                    'id': 'bike-lanes-layer',
+                    'type': 'line',
+                    'source': 'bike-lanes',
                     'paint': {
-                        'circle-radius': 8,
-                        'circle-stroke-width': 2,
-                        'circle-color': 'red',
-                        'circle-stroke-color': 'white'
+                        'line-color': '#ff8000',
+                        'line-width': 2
                     }
                 });
 
 
-                map.addSource('japan', {
+                map.addSource('racks', {
                     type: 'geojson',
-                    data: japan
+                    data: racks
                 });
 
                 map.addLayer({
-                    'id': 'japan-layer',
-                    'type': 'fill',
-                    'source': 'japan',
+                    'id': 'racks-layer',
+                    'type': 'circle',
+                    'source': 'racks',
                     'paint': {
-                        'fill-color': '#0080ff', // blue color fill
-                        'fill-opacity': 0.5
+                        'circle-color': '#0080ff',
+                        'circle-opacity': .5,
+                        'circle-radius': 2
                     }
                 });
 
@@ -116,17 +114,14 @@
 
 
             table = document.getElementsByTagName("table")[0];
-            let row, cell1, cell2, cell3;
-            for (let i = 0; i < earthquakes.features.length; i++) {
+            let row, cell1, cell2;
+            for (let i = 0; i < racks.features.length; i++) {
                 // Create an empty <tr> element and add it to the 1st position of the table:
                 row = table.insertRow(-1);
                 cell1 = row.insertCell(0);
                 cell2 = row.insertCell(1);
-                cell3 = row.insertCell(2);
-                cell1.innerHTML = earthquakes.features[i].properties.id;
-                cell2.innerHTML = earthquakes.features[i].properties.mag;
-                cell3.innerHTML = new Date(earthquakes.features[i].properties.time).toLocaleDateString(
-                    "en-US");
+                cell1.innerHTML = racks.features[i].properties.UNITDESC;
+                cell2.innerHTML = racks.features[i].properties.RACK_CAPACITY;
             }
         };
 

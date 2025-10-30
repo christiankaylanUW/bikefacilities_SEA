@@ -1,4 +1,5 @@
 library(tidyverse)
+library(sf)
 bikelanes <- st_read("bikelanes.geojson")
 bikelanes_clean <- bikelanes %>%
   select(OBJECTID, UNITID, UNITDESC, CATEGORY, MODEL_TYPE, Shape__Length, geometry)
@@ -9,3 +10,6 @@ bikerack <- st_read("bike_racks.geojson")
 bikeracks_clean <- bikerack %>%
   select(OBJECTID, UNITID, UNITDESC, CONDITION, RACK_CAPACITY, BIKE_FACILITY, geometry)
 st_write(bikeracks_clean, "bike_racks_clean.geojson", driver = "GeoJSON")
+
+sum(is.na(bikeracks_clean$RACK_CAPACITY))
+
