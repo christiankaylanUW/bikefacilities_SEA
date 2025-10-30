@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
     <meta charset="utf-8">
-    <title>Earthquake List</title>
+    <title>Seattle Bike Lanes and City Owned Bike Racks</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.js"></script>
@@ -11,18 +11,22 @@
             margin: 0;
             padding: 0;
         }
-        #container {
-            display: flex;
-            height: 100vh;
-            flex-direction: row;
-            align-items: stretch;
-        }
         #side-panel {
-            flex-basis: 500px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background: white;
             overflow-y: scroll;
+            padding: 10px;
         }
+
         #map {
-            flex-grow: 1;
+            position:absolute;
+            top: 0;
+            bottom: 0;
+            width:100%;
         }
         button {
             margin-bottom: 10px;
@@ -40,13 +44,25 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        
+        #title {
+            text-align: center;
+        }
+
+        @media (max-width: 1024px) {
+            #side-panel {
+                display: none;
+            }
+        }
+
     </style>
 </head> 
 <body>
-   <main id="container">
+   <main>
+        <div id="map"></div>
        <div id="side-panel">
 
-           <h2>Bike Racks</h2>
+           <h2 id ="title">Seattle Bike Lanes and City Owned Bike Racks</h2>
            <button>Sort by Capacity</button>
 
            <table>
@@ -57,7 +73,6 @@
            </table>
 
        </div>
-       <div id="map"></div>
    </main>
    <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiY2hyaXN0aWFua2Fsdml6IiwiYSI6ImNtaGIwYnN3ejBuM3gyb3Byc3kyYTIxNWsifQ.qRi071tuHBtWEMdv5sjCnQ';
@@ -138,6 +153,7 @@
             let table, rows, switching, i, x, y, shouldSwitch;
             table = document.getElementsByTagName("table")[0];
             switching = true;
+            let safetyCounter = 0; // NOTE: ChatGPT utilized to debug, recomended adding safety loop here to prevent infinite loop (fixed bug)
             /*Make a loop that will continue until
             no switching has been done:*/
             while (switching) {
@@ -166,9 +182,10 @@
                     rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
                     switching = true;
                 }
+                safetyCounter++; // See note above regarding AI suggestion
+                if (safetyCounter > 5000) break;
             }
         }
-
 </script>
 </body>
 </html>
