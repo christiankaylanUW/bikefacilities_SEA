@@ -52,6 +52,7 @@
         @media (max-width: 1024px) {
             #side-panel {
                 display: none;
+                  z-index: 9999;
             }
         }
 
@@ -78,12 +79,14 @@
         mapboxgl.accessToken = 'pk.eyJ1IjoiY2hyaXN0aWFua2Fsdml6IiwiYSI6ImNtaGIwYnN3ejBuM3gyb3Byc3kyYTIxNWsifQ.qRi071tuHBtWEMdv5sjCnQ';
         let map = new mapboxgl.Map({
             container: 'map', // container ID
-            style: 'mapbox://styles/mapbox/light-v11', // style URL
+            style: 'mapbox://styles/mapbox/light-v10', // style URL
             zoom: 11, // starting zoom
             center: [-122.33, 47.6] // starting center
         });
+        console.log("script loaded");
 
         async function geojsonFetch() {
+            console.log("geojsonFetch running");
             let response, lanes, racks, table;
             response = await fetch('assets/bike_facilities_clean.geojson');
             lanes = await response.json();
@@ -138,15 +141,11 @@
                 cell1.innerHTML = racks.features[i].properties.UNITDESC;
                 cell2.innerHTML = racks.features[i].properties.RACK_CAPACITY;
             }
+        let btn = document.querySelector("#side-panel button");
+        btn.addEventListener("click", sortTable);
         };
 
         geojsonFetch();
-
-
-
-        let btn = document.getElementsByTagName("button")[0];
-
-        btn.addEventListener('click', sortTable);
 
         // define the function to sort table
         function sortTable(e) {
